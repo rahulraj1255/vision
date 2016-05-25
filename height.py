@@ -2,7 +2,6 @@
 
 reference : http://www.pyimagesearch.com/2016/04/11/finding-extreme-points-in-contours-with-opencv/
 
-
 '''
 # USAGE
 # python extreme_points.py
@@ -18,7 +17,7 @@ def height(name, width=2):
 
     # threshold the image, then perform a series of erosions +
     # dilations to remove any small regions of noise
-    ret,thresh = cv2.threshold(gray,100,255,cv2.THRESH_BINARY) #threshold value needs to be changed
+    ret,thresh = cv2.threshold(gray,100,255,cv2.THRESH_BINARY_INV) #threshold value needs to be changed
     #thresh = cv2.erode(thresh, None, iterations=2)
     #thresh = cv2.dilate(thresh, None, iterations=2)
     # find contours in thresholded image, then grab the largest
@@ -27,7 +26,7 @@ def height(name, width=2):
     	cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
     contour = sorted(cnts, key=cv2.contourArea, reverse=True)
-    c = contour[1]
+    c = contour[0]
     # determine the most extreme points along the contour
     extLeft = tuple(c[c[:, :, 0].argmin()][0])
     extRight = tuple(c[c[:, :, 0].argmax()][0])
