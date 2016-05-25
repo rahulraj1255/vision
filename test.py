@@ -7,4 +7,4 @@ import math
 import sys
 
 
-height('2.jpg',5)
+height('1.jpg',5)
