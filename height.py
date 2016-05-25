@@ -6,7 +6,6 @@ reference : http://www.pyimagesearch.com/2016/04/11/finding-extreme-points-in-co
 # USAGE
 # python extreme_points.py
 # import the necessary packages
-import imutils
 import cv2
 
 def height(name, width=2):
@@ -23,9 +22,8 @@ def height(name, width=2):
     # find contours in thresholded image, then grab the largest
     # one
     cv2.imshow('adaptivethreshold',thresh)
-    cnts = cv2.findContours(thresh.copy(), cv2.RETR_TREE,
+    cnts,hei = cv2.findContours(thresh.copy(), cv2.RETR_TREE,
     	cv2.CHAIN_APPROX_SIMPLE)
-    cnts = cnts[0] if imutils.is_cv2() else cnts[1]
     contour = sorted(cnts, key=cv2.contourArea, reverse=True)
     c = contour[0]
     # determine the most extreme points along the contour
