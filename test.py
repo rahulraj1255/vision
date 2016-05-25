@@ -1,12 +1,10 @@
-from b import pupildetect
-
+from height import height
+from resize import resize
 import cv2
 import numpy as np
 import copy
 import math
 import sys
 
-x = pupildetect('5.jpg')
-cv2.imshow('final',x)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+
+height('2.jpg',5)
