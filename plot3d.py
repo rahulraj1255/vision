@@ -4,9 +4,12 @@ import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+# Function which takes two arguments ( names of front and side view images existing in the same directory )
 def plot3dHuman (front,side):
+#Extracting enclosing contours
 	f=encContour(front)
 	s=encContour(side)
+# Function which gives x values for a height t and modified contour f
 	def retval (t,f) :
 		x=[]
 		for i in range(0,len(f)-1):
@@ -21,6 +24,7 @@ def plot3dHuman (front,side):
 				if a*b<0:
 					x.append((f[:,0][i]+f[:,0][i+1])/2)
 		sorted(x)
+# At this stage x has the required values but there may be some repeated values
 		y=[]
 		for i in range(0,len(x)-1):
 			if x[i] == x[i+1] :
@@ -30,7 +34,7 @@ def plot3dHuman (front,side):
 			y.append(x[-1])
 		return y
 
-
+# Getting extreme points
 	fl=tuple(f[f[:,:,0].argmin()][0])
 	fr=tuple(f[f[:,:,0].argmax()][0])
 	 
@@ -46,6 +50,7 @@ def plot3dHuman (front,side):
 	#height('man_front.jpg')
 	#print ft,fb
 	#print st,sb
+# manipulating the contour to set the lowest point to origin and the body in positive direction
 	f1=f
 	f1=f1[:,0]-[fr[0]-(fl[0]+fr[0])/2,fb[1]]
 	f1[:,1]=-f1[:,1]
@@ -63,10 +68,13 @@ def plot3dHuman (front,side):
 	#ax.plot(x,s1[:,0],s1[:,1],label='side')
 	ax.set_aspect('equal')
 	#print retval(800,f1)
+#Using 40 data points per height 
 	theta=np.linspace(0,2*np.pi,40)
 	max(max(f1[:,1]),max(s1[:,1]))
+#Taking 120 data points for height
 	iterator=np.linspace(1,max(max(f1[:,1]),max(s1[:,1])),120)
 	X=[] ;Y=[];Z=[]
+#For every value in iterator plotting the data points considering ellipses
 	for fl in iterator:
 		x1=retval(fl,f1)
 		y1=retval(fl,s1)
@@ -119,13 +127,13 @@ def plot3dHuman (front,side):
 	fig=plt.figure()
 	ax=fig.add_subplot(111,projection='3d')
 	#print len(X),len(Y),len(Z)
+#Using wireframe plots ( please improve this : spaces between legs is not clear, may use surface plots )
 	ax.plot_wireframe(X,Y,Z,rstride=10,cstride=10)
 	# Create cubic bounding box to simulate equal aspect ratio
 	max_range = np.array([max(X)-min(X), max(Y)-min(Y),max(Z)-min(Z)]).max()
 	Xb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][0].flatten() + 0.5*(max(X)+min(X))
 	Yb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][1].flatten() + 0.5*(max(Y)+min(Y))
 	Zb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][2].flatten() + 0.5*(max(Z)+min(Z))
-	# Comment or uncomment following both lines to test the fake bounding box:
 	for xb, yb, zb in zip(Xb, Yb, Zb):
 	   ax.plot([xb], [yb], [zb], 'w')
 	plt.show()
