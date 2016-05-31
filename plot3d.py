@@ -5,7 +5,8 @@ import matplotlib
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 # Function which takes two arguments ( names of front and side view images existing in the same directory )
-def plot3dHuman (front,side):
+def plot3dHuman (front,side,a):
+	
 #Extracting enclosing contours
 	f=encContour(front)
 	s=encContour(side)
@@ -53,7 +54,9 @@ def plot3dHuman (front,side):
 # manipulating the contour to set the lowest point to origin and the body in positive direction
 	f1=f
 	f1=f1[:,0]-[fr[0]-(fl[0]+fr[0])/2,fb[1]]
+	a[:,1]=a[:,1]-fb[1]
 	f1[:,1]=-f1[:,1]
+	a[:,1]=-a[:,1]
 	s1=s
 	s1=s1[:,0]-[sl[0]+(sl[0]+sr[0])/2,sb[1]]
 	s1[:,1]=-s1[:,1]
@@ -72,7 +75,7 @@ def plot3dHuman (front,side):
 	theta=np.linspace(0,2*np.pi,40)
 	max(max(f1[:,1]),max(s1[:,1]))
 #Taking 120 data points for height
-	iterator=np.linspace(1,max(max(f1[:,1]),max(s1[:,1])),120)
+	iterator=np.linspace(a[0,1],a[1,1],100)
 	X=[] ;Y=[];Z=[]
 #For every value in iterator plotting the data points considering ellipses
 	for fl in iterator:
