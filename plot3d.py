@@ -5,11 +5,19 @@ import matplotlib
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 # Function which takes two arguments ( names of front and side view images existing in the same directory )
-def plot3dHuman (front,side,a):
+'''
+Usage :
+	Arguments:
+		front : name of front view of person
+		side  : name of side view of person
+		points : two points in the image to determine the portion intended to be plotted ( pass empty array to plot completely )
+'''
+def plot3dHuman (front,side,points):
 	
 #Extracting enclosing contours
-	f=encContour(front)
 	s=encContour(side)
+	f=encContour(front)
+	
 # Function which gives x values for a height t and modified contour f
 	def retval (t,f) :
 		x=[]
@@ -54,9 +62,11 @@ def plot3dHuman (front,side,a):
 # manipulating the contour to set the lowest point to origin and the body in positive direction
 	f1=f
 	f1=f1[:,0]-[fr[0]-(fl[0]+fr[0])/2,fb[1]]
-	a[:,1]=a[:,1]-fb[1]
+	if len(points) != 0 :
+		points[:,1]=points[:,1]-fb[1]
+		points[:,1]=-points[:,1]
 	f1[:,1]=-f1[:,1]
-	a[:,1]=-a[:,1]
+	
 	s1=s
 	s1=s1[:,0]-[sl[0]+(sl[0]+sr[0])/2,sb[1]]
 	s1[:,1]=-s1[:,1]
@@ -64,24 +74,26 @@ def plot3dHuman (front,side,a):
 	fig=plt.figure()
 	ax=fig.gca(projection='3d')
 	s1
-	y=np.zeros(len(f1[:,0]),dtype=np.int64)
+	#y=np.zeros(len(f1[:,0]),dtype=np.int64)
 	#ax.plot(f1[:,0],y,f1[:,1],label='front')
 
-	x=np.zeros(len(s1[:,0]),dtype=np.int64)
+	#x=np.zeros(len(s1[:,0]),dtype=np.int64)
 	#ax.plot(x,s1[:,0],s1[:,1],label='side')
 	ax.set_aspect('equal')
 	#print retval(800,f1)
-#Using 40 data points per height 
-	theta=np.linspace(0,2*np.pi,40)
-	max(max(f1[:,1]),max(s1[:,1]))
-#Taking 120 data points for height
-	iterator=np.linspace(a[0,1],a[1,1],100)
+#Using 30 data points per height 
+	theta=np.linspace(0,2*np.pi,30)
+	if len(points) != 0 :
+		t= float( points[1,1]- points[0,1])/(max(max(f1[:,1]),max(s1[:,1]))*0.01)
+		iterator=np.linspace(points[0,1],points[1,1],t)
+	else :
+		iterator=np.linspace(0,max(max(f1[:,1]),max(s1[:,1])),100)
 	X=[] ;Y=[];Z=[]
 #For every value in iterator plotting the data points considering ellipses
 	for fl in iterator:
 		x1=retval(fl,f1)
 		y1=retval(fl,s1)
-		if len(x1) in [0,1,3,5] :
+		if len(x1)%2 !=0 :
 			continue
 		if len(x1) == 6:
 			x_a=(x1[0]+x1[1])/2
@@ -101,12 +113,35 @@ def plot3dHuman (front,side,a):
 			for temp in (y1[0]+y1[1])/2+b1*np.sin(theta) :
 				Y.append(temp)
 				Z.append(fl)
+		
 		xf=[]
 		if len(x1) == 6 :
 			xf=[x1[2],x1[3]]
-		else :
+		elif len(x1) in [2,4] :
 			xf=x1
+		else:
+			maxdiff=0
+			d=0
+			index=-1
+			while d<len(x1) :
+				diff=x1[d+1]-x1[d]
+				if diff> maxdiff :
+					maxdiff = diff
+					index=d
+				d+=2
+				xf=[x1[index],x1[index+1]]
+			try :
+				if x1[index-1]-x1[index-2] < 1.20*(x1[index+1]-x1[index]) and x1[index-1]-x1[index-2] > 0.80*(x1[index+1]-x1[index]) :
+					xf=x1[index-2:index+2]
+					x1=xf
+				elif x1[index+3]-x1[index+2] < 1.20*(x1[index+1]-x1[index]) and x1[index+3]-x1[index+2] > 0.80*(x1[index+1]-x1[index]) :
+					xf=x1[index:index+4]
+					x1=xf
+			except IndexError:
+				pass
 	#	print len(x1),len(y1)
+		if xf == [] :
+			continue
 		x_a=(xf[1]+xf[0])/2
 		y_a=(y1[0]+y1[1])/2
 		a=(xf[1]-xf[0])/2

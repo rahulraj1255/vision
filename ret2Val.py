@@ -18,5 +18,7 @@ def ret2Val (i):
 		if len(a) == 2:
 			
 			return np.sort(a,axis=1)
+			cv2.destroyAllWindows()
 			exit(0)
+	
 	return [0,0]
