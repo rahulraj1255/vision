@@ -9,9 +9,9 @@ def encContour(i):
 	can=cv2.Canny(gray,120,200)
 	closing=cv2.morphologyEx(can,cv2.MORPH_CLOSE,np.ones((3,3),np.uint8),iterations=1)
 	contours,hei=cv2.findContours(closing.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
-	x=np.zeros(closing.shape,dtype=np.uint8)
-	cv2.drawContours(x,contours,0,(255),2)
-	cv2.imwrite('TEST.jpg',x)
+	#x=np.zeros(closing.shape,dtype=np.uint8)
+	#cv2.drawContours(x,contours,0,(255),2)
+	#cv2.imwrite('TEST.jpg',x)
 	if len(contours) == 1 :
 		return contours[0]
 	else:
