@@ -5,10 +5,8 @@ def ret2Val (i):
 	def ret2val(event,x,y,flags,param):
 		if event==cv2.EVENT_LBUTTONDOWN :
 			a.append([x,y])
-		elif event == cv2.EVENT_LBUTTONDOWN:
-			a.append([x,y])
 	image=cv2.imread(i)
-	cv2.namedWindow('Click')
+	cv2.namedWindow('Click',0)
 	cv2.setMouseCallback('Click',ret2val)
 	while(1) :
 		cv2.imshow('Click',image)
@@ -17,7 +15,7 @@ def ret2Val (i):
 			
 		if len(a) == 2:
 			cv2.destroyAllWindows()
-			return np.sort(a,axis=1)
+			return sorted(a,key=lambda x : x[1] )
 			
 			exit(0)
 	
